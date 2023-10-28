@@ -2,3 +2,6 @@ build
 *.exe
 *.o
 .vscode
+.qmake.stash
+.qtc_clangd/
+Makefile
