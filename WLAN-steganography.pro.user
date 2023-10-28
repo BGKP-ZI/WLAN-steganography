@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 11.0.3, 2023-10-28T05:37:59. -->
+<!-- Written by QtCreator 11.0.3, 2023-10-28T10:27:23. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -244,7 +244,7 @@
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory">/home/ent1r/study/WLAN-steganography</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/ent1r/study/WLAN-steganography/build/build/</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/ent1r/study/WLAN-steganography/build/</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
