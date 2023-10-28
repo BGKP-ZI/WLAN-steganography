@@ -1,11 +1,7 @@
-set(OUTFILE ip_address.exe)
+set(OUTFILE hello_sample.exe)
 
 set(SOURCES 
-    ip_test.cc
-)
-
-set(HEADERS 
-    ${PROJECT_ROOT_DIR}/include/Network/Address.hh
+    hello.cc
 )
 
 include_directories(${PROJECT_ROOT_DIR}/include)
