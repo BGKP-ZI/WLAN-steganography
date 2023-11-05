@@ -2,6 +2,8 @@
 
 #include <QApplication>
 
+//TODO: change path icon. Add to source file
+
 int main(int argc, char** argv) {
     QApplication a(argc, argv);
     MainWindow w;

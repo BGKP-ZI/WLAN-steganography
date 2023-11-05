@@ -4,7 +4,10 @@
 #include <QMainWindow>
 #include <QtGui>
 #include <QWidget>
-#include <QToolBar>
+
+#include "include/Graphics/chats.hh"
+#include "include/Graphics/network.hh"
+#include "include/Graphics/settings.hh"
 
 #define APP_NAME "WLAN-steganography"
 
@@ -25,8 +28,10 @@ private:
 
 
     Ui::MainWindow *ui;
+    Chats*      chats_layout;
+    Network*    network_layout;
+    Settings*   settings_layout;
 
-    QAction* close_act;
 
 private slots:
     void void_slot();

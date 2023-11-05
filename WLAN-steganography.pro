@@ -17,7 +17,7 @@ VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
 
 DEFINES += VERSION_STR=\\\"$${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}\\\"
 
-CONFIG(release debug|release) {
+CONFIG(release, debug|release) {
     QMAKE_CXXFLAGS += -Os
     QMAKE_CXXFLAGS += -fstack-protector-all
     DEFINES += QT_NO_DEBUG_OUTPUT
@@ -36,13 +36,22 @@ UI_DIR = $${OUTPUTDIR}/.ui
 
 SOURCES += \
     samples/Graphics/main.cc \
-    sources/Graphics/mainwindow.cc
+    sources/Graphics/mainwindow.cc \
+    sources/Graphics/chats.cc \
+    sources/Graphics/network.cc \
+    sources/Graphics/settings.cc
 
 HEADERS += \
-    include/Graphics/mainwindow.hh
+    include/Graphics/mainwindow.hh \
+    include/Graphics/chats.hh \
+    include/Graphics/network.hh \
+    include/Graphics/settings.hh
 
 FORMS += \
-    include/Graphics/mainwindow.ui
+    include/Graphics/mainwindow.ui \
+    include/Graphics/chats.ui \
+    include/Graphics/network.ui \
+    include/Graphics/settings.ui
 
 
 
