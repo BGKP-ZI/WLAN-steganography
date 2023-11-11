@@ -5,11 +5,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR})
 
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+# qt_standard_project_setup()
+
 # Now ignore non linux system
 add_compile_options(
   "-Wall"
   "-Wextra"
-  "-O3"
+  "-O2"
 )
 
 find_program(IS_CLANG_FORMAT "clang-format")
