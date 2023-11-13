@@ -17,7 +17,7 @@ public:
       addr[i] = 0;
   }
 
-  [[nodiscard]] static inline std::size_t address_length(void) const { return N; }
+  [[nodiscard]] constexpr static inline std::size_t size(void) { return N; }
 
   [[nodiscard]] Address(const std::string &str, const bool isHex = false) {
     std::regex regex{REGEX};
@@ -72,7 +72,7 @@ public:
 };
 
 #define IPv4Address Address<4, Network::RegEx::IPv4_regex>
-#define MACAddress  Address<6, Network::RegEx::MAC_regex>
+#define MACAddress Address<6, Network::RegEx::MAC_regex>
 
 } // namespace Network
 
