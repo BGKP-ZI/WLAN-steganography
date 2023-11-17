@@ -1,13 +1,14 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef __MAINWINDOW_hh_
+#define __MAINWINDOW_hh_
 
 #include <QMainWindow>
 #include <QWidget>
 #include <QtGui>
+#include <QVBoxLayout>
 
-#include "Graphics/chats.hh"
-#include "Graphics/network.hh"
-#include "Graphics/settings.hh"
+#include "Graphics/chats_layout.hh"
+#include "Graphics/network_layout.hh"
+#include "Graphics/settings_layout.hh"
 
 #define APP_NAME "WLAN-steganography"
 
@@ -29,9 +30,9 @@ private:
   void setup_MainWindow();
 
   Ui::MainWindow *ui;
-  Chats *chats_layout;
-  Network *network_layout;
-  Settings *settings_layout;
+  Chats_layout *chats_layout;
+  Network_layout *network_layout;
+  Settings_layout *settings_layout;
 
 private slots:
   void void_slot();
@@ -41,4 +42,4 @@ private slots:
 
   void test_slot();
 };
-#endif // MAINWINDOW_H
+#endif // __MAINWINDOW_hh_

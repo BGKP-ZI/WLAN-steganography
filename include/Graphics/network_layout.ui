@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Network</class>
- <widget class="QWidget" name="Network">
+ <class>Network_layout</class>
+ <widget class="QWidget" name="Network_layout">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -42,7 +42,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btn_connetc">
+      <widget class="QPushButton" name="btn_connect">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -80,7 +80,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>btn_connetc</tabstop>
+  <tabstop>btn_connect</tabstop>
   <tabstop>btn_showAll</tabstop>
  </tabstops>
  <resources/>
