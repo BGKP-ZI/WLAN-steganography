@@ -5,38 +5,20 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR})
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
-# qt_standard_project_setup()
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
+message(STATUS "Found Qt: Qt${QT_VERSION_MAJOR}")
 
-# Now ignore non linux system
-add_compile_options(
-  "-Wall"
-  "-Wextra"
-  "-O2"
-)
-
-find_program(IS_CLANG_FORMAT "clang-format")
-if(IS_CLANG_FORMAT)
-  file(GLOB_RECURSE ALL_SOURCE_FILES
-      ${CMAKE_SOURCE_DIR}/sources/*.*[ch]
-      ${CMAKE_SOURCE_DIR}/include/*.*[ch]
-      ${CMAKE_SOURCE_DIR}/samples/*.*[ch]
-  )
-  if(ALL_SOURCE_FILES)
+if(UNIX AND NOT APPLE)
+  set(OS_TYPE "LINUX")
+else()
+  if (MSVC OR MSYS OR MINGW)
+    set(OS_TYPE "WINDOWS")
   else()
-    message(STATUS "Can not find any source/header files for format target")
+    set(OS_TYPE "UNKNOWN")
   endif()
+endif ()
 
-  add_custom_target(
-      format
-      COMMAND clang-format
-      -style=LLVM
-      -i
-      ${ALL_SOURCE_FILES}
-    )
-endif()
-
-# TODO: add run target
-
-add_subdirectory(sources)
-add_subdirectory(samples)
+add_subdirectory(Crypto)
+add_subdirectory(Graphics)
+add_subdirectory(Network)
