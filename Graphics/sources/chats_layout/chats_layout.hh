@@ -21,6 +21,7 @@ public:
 
   QPushButton* btn_receive;
   QPushButton* btn_load_file;
+  QPushButton* btn_get_file;
 
 public slots:
   void set_network(Network::MACAddress &mac, HICCUPS::HICCUPS* wlan_);
@@ -34,6 +35,7 @@ private:
 private slots:
   void change_mode();
   void load_file();
+  void get_file();
 };
 
 #endif // __CHATS_LAYOUT_hh__
