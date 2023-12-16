@@ -1,0 +1,77 @@
+#include <HICCUPS.hh>
+
+namespace HICCUPS {
+
+HICCUPS::HICCUPS(const std::string &interface):
+    WLAN(interface) {}
+
+void HICCUPS::HDC3_send(const Network::MACAddress &addr, Crypto::DataLoader &dload, const std::string &path) {
+    if (ifconfig.mtu < 281)
+        throw std::runtime_error("MTU less than needed header size");
+
+    std::string data = Crypto::DataLoader::load(path);
+
+    for (std::size_t idx = 0, end_idx = data.size(), step = ifconfig.mtu - 281, i = 0; idx < end_idx; idx += step, ++i) {
+
+        std::string dpart = "";
+        dpart.resize(std::min(ifconfig.mtu - 14 - 11 - path.length(), data.size() - idx));
+        for (std::size_t j = 0; j < step; ++j)
+            dpart[j] = data[idx + j];
+
+        RawData raw;
+        // std::cout << path << " = " << path.size() << " | " << " = " << dpart.size() << std::endl;
+        raw.set_name(path) ;
+        raw.set_data(dpart);
+        raw.type = 0;
+        raw.packet_num = i;
+        raw.is_end = (idx + step > end_idx);
+        raw.crc_calc();
+
+        std::string etext = dload.chipper_text(raw.to_string());
+
+        std::cout << i << std::endl;
+        send(addr, etext);        
+    }
+}
+
+void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dload, const std::string &path) {
+    std::string result_msg = "";
+
+    char *recv_msg = new char[ifconfig.mtu];
+    struct sockaddr_ll from;
+    socklen_t fromlen = sizeof(from);
+    
+    std::size_t count = 0;
+
+    for (;;) {
+        for (;;) {
+            std::memset(recv_msg, 0, ifconfig.mtu);
+            if (recvfrom(ifconfig.socket_id, recv_msg, ifconfig.mtu, 0, (struct sockaddr *)&from, &fromlen) == -1) {
+                std::cout << "Can not recv msg" << std::endl;
+                usleep(10000);
+            } else {
+                break;
+            }
+        }
+
+        Network::MACAddress my_addr = ifconfig.MAC; 
+
+        WLAN_header *wlan_hdr = (WLAN_header *)recv_msg;
+        bool is_for_me = true;
+        for (std::size_t i = 0; i < 6; ++i) {
+            is_for_me &= ((wlan_hdr->src.addr[i]  == addr.addr[i]) 
+                      &&  (wlan_hdr->dest.addr[i] == my_addr.addr[i]));
+        }
+        std::cout << "Source | " << wlan_hdr-> src.to_string(true) << " | " <<    addr.to_string(true) << std::endl;
+        std::cout << "Destin | " << wlan_hdr->dest.to_string(true) << " | " << my_addr.to_string(true) << std::endl;
+        
+        if (is_for_me) {
+            ++count;
+            std::cout << "I hear something good. It happens " << count << " times" << std::endl;
+        }
+
+    }
+    delete[] recv_msg;
+}
+
+}
