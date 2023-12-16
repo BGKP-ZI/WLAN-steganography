@@ -43,9 +43,6 @@
      </item>
     </layout>
    </item>
-   <item>
-    <widget class="QListWidget" name="addres_listWidget"/>
-   </item>
   </layout>
  </widget>
  <tabstops>
