@@ -38,6 +38,7 @@ private:
   Settings_layout *settings_layout;
 
   std::vector<std::string> all_interfaces;
+  HICCUPS::HICCUPS* wlan = nullptr;
   Network::MACAddress MAC;
 
 private slots:
@@ -47,6 +48,7 @@ private slots:
   void run_settings();
 
   void get_mac_addres(QListWidgetItem *item);
+  void get_wlan(QAction *action);
 
   void test_slot();
 };

@@ -13,7 +13,7 @@ WLAN::WLAN_header::WLAN_header(const MACAddress &to_addr,
 
 void WLAN::WLAN_header::cp2buff(char *buff) const noexcept {
   std::memmove(buff, dest.addr.data(), dest.size());
-  std::memmove(buff + dest.size(), src.addr.data(), dest.size());
+  std::memmove(buff + dest.size(), src.addr.data(), src.size());
   std::memmove(buff + 2 * dest.size(), &type, sizeof(type));
 }
 

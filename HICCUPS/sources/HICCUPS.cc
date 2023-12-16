@@ -72,8 +72,8 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
             is_for_me &= ((wlan_hdr->src.addr[i]  == addr.addr[i]) 
                       &&  (wlan_hdr->dest.addr[i] == my_addr.addr[i]));
         }
-        // std::cout << "Source | " << wlan_hdr-> src.to_string() << " | " << addr.to_string() << std::endl;
-        // std::cout << "Destin | " << wlan_hdr->dest.to_string() << " | " << my_addr.to_string() << std::endl;
+        std::cout << "Source | " << wlan_hdr-> src.to_string(true) << " | " <<    addr.to_string(true) << std::endl;
+        std::cout << "Destin | " << wlan_hdr->dest.to_string(true) << " | " << my_addr.to_string(true) << std::endl;
         
         if (is_for_me) {
             ++count;

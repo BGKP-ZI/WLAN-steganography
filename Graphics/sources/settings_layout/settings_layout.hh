@@ -8,8 +8,6 @@
 #include <QDebug>
 #include <QAction>
 
-#include <WLAN.hh> 
-
 namespace Ui {
 class Settings_layout;
 }
@@ -30,8 +28,6 @@ public:
 private:
   Ui::Settings_layout *ui;
   QString all_interfaces;
-
-
 };
 
 #endif // SETTINGS_LAYOUT_HH

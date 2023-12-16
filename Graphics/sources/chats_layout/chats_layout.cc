@@ -7,6 +7,8 @@ Chats_layout::Chats_layout(QWidget *parent) : QWidget(parent), ui(new Ui::Chats_
   ui->setupUi(this);
   hide();
 
+  hiccups = nullptr;
+
   btn_receive   = new QPushButton(tr("To Sender mode"), this);
   btn_load_file = new QPushButton(tr("Load file"), this);
   ui->horizontalLayout->addWidget(btn_receive);
@@ -44,22 +46,20 @@ void Chats_layout::change_mode() {
 }
 
 
-
-
 void Chats_layout::load_file() {
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Text Files (*.txt *.pdf);;Image Files (*.jpg *.png)"));
 
   if (fileName != "") {
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly)) {
-      QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-    }
-    QTextStream in(&file);
-    // ui->textEdit->setText(in.readAll());
-    file.close();
+    setCursor(Qt::WaitCursor);
+
+    Crypto::DataLoader cdataloader(Crypto::ChipperT::SimpleXOR, Crypto::KeyGenerators::BBS_Keygen, {2, 997}); //TODO: seed ned get from settings
+    hiccups->HDC3_send(MAC, cdataloader, fileName.toStdString());
+
+    setCursor(Qt::ArrowCursor);
   } 
 }
 
-void Chats_layout::set_mac_addres(Network::MACAddress &mac) {
+void Chats_layout::set_network(Network::MACAddress &mac, HICCUPS::HICCUPS* wlan_) {
   MAC = mac;
+  hiccups = wlan_;
 }
