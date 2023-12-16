@@ -7,6 +7,8 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QAction>
+#include <QListWidget>
+#include <QMessageBox>
 
 //include Network
 #include <WLAN.hh>
@@ -24,13 +26,13 @@ public:
   ~Network_layout();
 
   QPushButton* btn_connect;
+  QListWidget* addres_listWidget;
 
 public slots:
   void set_wlan(QAction *action);
 
 private slots:
   void show_all_address();
-  void address_pressed(QListWidgetItem *item);
   void test();
 
 private:

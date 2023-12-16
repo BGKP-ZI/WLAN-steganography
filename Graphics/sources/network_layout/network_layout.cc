@@ -10,9 +10,12 @@ Network_layout::Network_layout(QWidget *parent) : QWidget(parent), ui(new Ui::Ne
   btn_connect = new QPushButton("Connect", this);
   btn_connect->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   ui->horizontalLayout->addWidget(btn_connect);
+  btn_connect->setVisible(false);
+
+  addres_listWidget = new QListWidget(this);
+  ui->verticalLayout->addWidget(addres_listWidget);
+
   connect(ui->btn_showAll, SIGNAL(pressed()), this, SLOT(show_all_address()));
-  connect(ui->addres_listWidget, SIGNAL(itemPressed(QListWidgetItem *)), this,
-          SLOT(address_pressed(QListWidgetItem *)));
 }
 
 Network_layout::~Network_layout() { 
@@ -23,20 +26,19 @@ Network_layout::~Network_layout() {
 
 void Network_layout::set_wlan(QAction *action) {
   wlan = new Network::WLAN((action->text()).toStdString());
+  QMessageBox msgBox;
+  msgBox.setIcon(QMessageBox::Information);
+  msgBox.setWindowTitle(tr("Interfaces is selected."));
+  msgBox.setText(tr("Interfaces ") + action->text() + tr(" is selected."));
+  // TODO: change layout to settings
+  msgBox.exec();
 }
 
 void Network_layout::show_all_address() {
   if(wlan != nullptr) {
     setCursor(Qt::WaitCursor);
 
-    ui->addres_listWidget->clear();
-      //  dupm(std::stringbuffer);
-      //  pars std::stringbuffer to address_list
-
-
-    // get intreface
-    // std::vector<std::string> interfaces = Network::WLAN::get_all_interfaces();
-    // Network::WLAN wlan("wlan0"); // TODO: maybe need get interface from settings???
+    addres_listWidget->clear();
 
     // lock app and get address
     wlan->scan_subnet();
@@ -46,17 +48,18 @@ void Network_layout::show_all_address() {
     wlan->show_ARP_table(out_str);
     QString address(QString::fromStdString(out_str.str()));
     address_list = address.replace("{", "").replace("}", "").split("\n");
-    ui->addres_listWidget->addItems(address_list);
+    address_list.removeLast();
+    addres_listWidget->addItems(address_list);
 
     // unlock app
     setCursor(Qt::ArrowCursor);
   } else {
-    qWarning() << "interface not choosen";
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setWindowTitle(tr("Warning!"));
+    msgBox.setText(tr("You didn't choose the interfes!"));
+    msgBox.exec();
   }
-}
-
-void Network_layout::address_pressed(QListWidgetItem *item) {
-  //qDebug() << "test" << item->text();
 }
 
 void Network_layout::test() {

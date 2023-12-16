@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
   settings_layout->get_all_interfaces(all_interfaces);
   connect(settings_layout->menu_int, SIGNAL(triggered(QAction *)), network_layout,
           SLOT(set_wlan(QAction *)));
+  connect(network_layout->addres_listWidget,SIGNAL(itemPressed(QListWidgetItem *)), this,
+          SLOT(get_mac_addres(QListWidgetItem *)));
 }
 
 MainWindow::~MainWindow() { 
@@ -86,6 +88,7 @@ void MainWindow::run_chats() {
     settings_layout->hide();
   }
 
+  chats_layout->set_mac_addres(MAC);
   chats_layout->show();
 }
 
@@ -109,6 +112,12 @@ void MainWindow::run_settings() {
   }
 
   settings_layout->show();
+}
+
+void MainWindow::get_mac_addres(QListWidgetItem *item) {
+  QString tmp = item->text().split(": ").at(1);
+  tmp.replace(".", ":");
+  MAC = Network::MACAddress(tmp.toStdString(), true);
 }
 
 void MainWindow::void_slot() {}

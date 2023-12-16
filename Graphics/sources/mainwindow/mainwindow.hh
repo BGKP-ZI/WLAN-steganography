@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QAction>
+#include <QListWidgetItem>
 
 #include <chats_layout/chats_layout.hh>
 #include <network_layout/network_layout.hh>
@@ -37,12 +38,15 @@ private:
   Settings_layout *settings_layout;
 
   std::vector<std::string> all_interfaces;
+  Network::MACAddress MAC;
 
 private slots:
   void void_slot();
   void run_chats();
   void run_network();
   void run_settings();
+
+  void get_mac_addres(QListWidgetItem *item);
 
   void test_slot();
 };
