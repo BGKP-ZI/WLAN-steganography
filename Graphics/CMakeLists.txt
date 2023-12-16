@@ -51,20 +51,20 @@ set (SOURCES
 )
 
 set (RESOURCES
-  ${PROJECT_ROOT_DIR}/Graphics/resource/resource.qrc
+  ${PROJECT_ROOT_DIR}/Graphics/resources/resource.qrc
 )
-
-qt_add_resources(RCC_SOURCES ${RESOURCES})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
   qt_add_executable(${EXEC} 
     MANUAL_FINALIZATION
+    ${RESOURCES}
     ${SOURCES} 
     ${HEADERS} 
     ${UI_HEADERS}
   )
 else()
   add_executable(${EXEC}
+    ${RESOURCES}  
     ${SOURCES} 
     ${HEADERS} 
     ${UI_HEADERS}

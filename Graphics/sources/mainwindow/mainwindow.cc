@@ -31,8 +31,12 @@ void MainWindow::setup_MainWindow() {
   // set icon
   setWindowTitle(APP_NAME);
   setWindowFlags(Qt::Window);
-  QString path_icon{":images/klimanov.ico"};
-  setWindowIcon(QIcon{path_icon});
+  QString path_icon{":/klimanov.ico"};
+  qDebug() << 
+  if(!QFile(":/klimanov.ico").exists()) {
+    qWarning() << "Icon file not found";
+  }
+  setWindowIcon(QIcon{":/klimanov.ico"});
 
   // set size
   QSize screen_size = qApp->screens().at(0)->size();
