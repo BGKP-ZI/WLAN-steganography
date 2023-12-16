@@ -21,16 +21,18 @@ MainWindow::MainWindow(QWidget *parent)
 
 
   // TODO: вынести в отдельную функию
-  all_interfaces = Network::WLAN::get_all_interfaces();
-  // connect(settings_layout->btn_int, &QPushButton::pressed, [=] () { settings_layout->get_all_interfaces(all_interfaces);});
+  all_interfaces = HICCUPS::HICCUPS::get_all_interfaces();
   settings_layout->get_all_interfaces(all_interfaces);
-  connect(settings_layout->menu_int, SIGNAL(triggered(QAction *)), network_layout,
-          SLOT(set_wlan(QAction *)));
-  connect(network_layout->addres_listWidget,SIGNAL(itemPressed(QListWidgetItem *)), this,
+
+  connect(settings_layout->menu_int, SIGNAL(triggered(QAction *)), this,
+         SLOT(get_wlan(QAction *)));  
+
+  connect(network_layout->addres_listWidget, SIGNAL(itemPressed(QListWidgetItem *)), this,
           SLOT(get_mac_addres(QListWidgetItem *)));
 }
 
 MainWindow::~MainWindow() { 
+  delete wlan;
   delete chats_layout;
   delete network_layout;
   delete settings_layout;
@@ -88,7 +90,7 @@ void MainWindow::run_chats() {
     settings_layout->hide();
   }
 
-  chats_layout->set_mac_addres(MAC);
+  chats_layout->set_network(MAC, wlan);
   chats_layout->show();
 }
 
@@ -118,6 +120,16 @@ void MainWindow::get_mac_addres(QListWidgetItem *item) {
   QString tmp = item->text().split(": ").at(1);
   tmp.replace(".", ":");
   MAC = Network::MACAddress(tmp.toStdString(), true);
+}
+
+void MainWindow::get_wlan(QAction *action) {
+  wlan = new HICCUPS::HICCUPS((action->text()).toStdString());
+  network_layout->set_wlan(wlan);
+  QMessageBox msgBox;
+  msgBox.setIcon(QMessageBox::Information);
+  msgBox.setWindowTitle(tr("Interfaces is selected."));
+  msgBox.setText(tr("Interfaces ") + action->text() + tr(" is selected."));
+  msgBox.exec();
 }
 
 void MainWindow::void_slot() {}

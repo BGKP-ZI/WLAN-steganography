@@ -6,7 +6,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include <WLAN.hh>
+#include <HICCUPS.hh>
 
 namespace Ui {
 class Chats_layout;
@@ -23,11 +23,12 @@ public:
   QPushButton* btn_load_file;
 
 public slots:
-  void set_mac_addres(Network::MACAddress &mac);
+  void set_network(Network::MACAddress &mac, HICCUPS::HICCUPS* wlan_);
 
 private:
   Ui::Chats_layout *ui;
   Network::MACAddress MAC;
+  HICCUPS::HICCUPS* hiccups;
   int receive_mod = 1;
 
 private slots:
