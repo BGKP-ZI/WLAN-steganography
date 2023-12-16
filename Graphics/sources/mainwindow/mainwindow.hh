@@ -34,6 +34,8 @@ private:
   Network_layout *network_layout;
   Settings_layout *settings_layout;
 
+  std::vector<std::string> all_interfaces;
+
 private slots:
   void void_slot();
   void run_chats();

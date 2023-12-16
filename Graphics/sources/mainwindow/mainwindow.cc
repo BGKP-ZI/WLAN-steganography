@@ -18,6 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
 
   settings_layout = new Settings_layout();
   ui->horizontalLayout->addWidget(settings_layout);
+
+
+  // TODO: вынести в отдельную функию
+  all_interfaces = Network::WLAN::get_all_interfaces();
+  // connect(settings_layout->btn_int, &QPushButton::pressed, [=] () { settings_layout->get_all_interfaces(all_interfaces);});
+  settings_layout->get_all_interfaces(all_interfaces);
+  connect(settings_layout->menu_int, SIGNAL(triggered(QAction *)), network_layout,
+          SLOT(set_wlan(QAction *)));
 }
 
 MainWindow::~MainWindow() { 
