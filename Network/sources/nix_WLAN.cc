@@ -82,8 +82,8 @@ void WLAN::send(const MACAddress &addr, const std::string &msg) const {
   }
   
   char *send_buff = new char[ifconfig.mtu+1];
-	
-  for (std::size_t buffer_size = 0, buffer_end = msg.size(); buffer_size < buffer_end; buffer_size += (ifconfig.mtu - header.size)) {
+
+  for (std::size_t buffer_size = 0, buffer_end = msg.size(), step = ifconfig.mtu - header.size; buffer_size < buffer_end; buffer_size += step) {
     
     for (std::size_t i = 0, i_end = ifconfig.mtu + 1; i < i_end; ++i) 
       send_buff[i] = 0;
@@ -97,6 +97,14 @@ void WLAN::send(const MACAddress &addr, const std::string &msg) const {
     for (std::size_t i = 0; i < end_idx; ++i) {
       send_buff[header.size + i] = msg[i+buffer_size];
     }
+
+    #if 0
+    for (std::size_t i = 0; i < end_idx; ++i) {
+      if (i % 14 == 0 && i != 0) printf("\n");
+      printf("%02x ", (unsigned char)send_buff[i]);
+    }
+    printf("\n");
+    #endif
 
     int sentlen = sendto(ifconfig.socket_id, send_buff, end_idx + header.size, 0, (sockaddr *)&to, sizeof(to));
     if (sentlen == -1) {
@@ -186,7 +194,7 @@ void WLAN::send_ARP_request(const char *iface, const char *targetIP) {
   memcpy(packet + WLAN_header::size, &arpHeader, arpHeader.size);
 
 #if 0
-  for (std::size_t i = 0, end = WLAN_header::size() + arpHeader.size; i < end; ++i) {
+  for (std::size_t i = 0, end = WLAN_header::size + arpHeader.size; i < end; ++i) {
     if (i % 14 == 0 && i != 0) printf("\n");
     printf("%02x ", (unsigned char)packet[i]);
   }

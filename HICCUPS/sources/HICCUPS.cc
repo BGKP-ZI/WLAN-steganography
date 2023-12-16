@@ -14,7 +14,7 @@ void HICCUPS::HDC3_send(const Network::MACAddress &addr, Crypto::DataLoader &dlo
     for (std::size_t idx = 0, end_idx = data.size(), step = ifconfig.mtu - 281, i = 0; idx < end_idx; idx += step, ++i) {
 
         std::string dpart = "";
-        dpart.resize(std::min(ifconfig.mtu - 14, data.size() - idx));
+        dpart.resize(std::min(ifconfig.mtu - 14 - 11 - path.length(), data.size() - idx));
         for (std::size_t j = 0; j < step; ++j)
             dpart[j] = data[idx + j];
 
@@ -29,11 +29,7 @@ void HICCUPS::HDC3_send(const Network::MACAddress &addr, Crypto::DataLoader &dlo
 
         std::string etext = dload.chipper_text(raw.to_string());
 
-        for (int j = 0, end_j = etext.size(); j < end_j; ++j) {
-            printf("%02x", etext[j]);
-        }
-        printf("\n");
-
+        std::cout << i << std::endl;
         send(addr, etext);        
     }
 }
@@ -45,6 +41,8 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
     struct sockaddr_ll from;
     socklen_t fromlen = sizeof(from);
     
+    std::size_t count = 0;
+
     for (;;) {
         for (;;) {
             std::memset(recv_msg, 0, ifconfig.mtu);
@@ -74,11 +72,12 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
             is_for_me &= ((wlan_hdr->src.addr[i]  == addr.addr[i]) 
                       &&  (wlan_hdr->dest.addr[i] == my_addr.addr[i]));
         }
-        std::cout << "Source | " << wlan_hdr-> src.to_string() << " | " << addr.to_string() << std::endl;
-        std::cout << "Destin | " << wlan_hdr->dest.to_string() << " | " << my_addr.to_string() << std::endl;
+        // std::cout << "Source | " << wlan_hdr-> src.to_string() << " | " << addr.to_string() << std::endl;
+        // std::cout << "Destin | " << wlan_hdr->dest.to_string() << " | " << my_addr.to_string() << std::endl;
         
         if (is_for_me) {
-            std::cout << "I hear something good" << std::endl;
+            ++count;
+            std::cout << "I hear something good. It happens " << count << " times" << std::endl;
         }
 
     }
