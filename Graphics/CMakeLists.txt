@@ -48,23 +48,26 @@ set (SOURCES
   ${PROJECT_ROOT_DIR}/Graphics/sources/chats_layout/chats_layout.cc
   ${PROJECT_ROOT_DIR}/Graphics/sources/network_layout/network_layout.cc
   ${PROJECT_ROOT_DIR}/Graphics/sources/settings_layout/settings_layout.cc
+  ${PROJECT_ROOT_DIR}/Network/sources/nix_WLAN.cc
+  ${PROJECT_ROOT_DIR}/Network/sources/IfConfig.cc
+  ${PROJECT_ROOT_DIR}/Network/sources/WLAN_header.cc
 )
 
 set (RESOURCES
-  ${PROJECT_ROOT_DIR}/Graphics/resource/resource.qrc
+  ${PROJECT_ROOT_DIR}/Graphics/resources/resource.qrc
 )
-
-qt_add_resources(RCC_SOURCES ${RESOURCES})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
   qt_add_executable(${EXEC} 
     MANUAL_FINALIZATION
+    ${RESOURCES}
     ${SOURCES} 
     ${HEADERS} 
     ${UI_HEADERS}
   )
 else()
   add_executable(${EXEC}
+    ${RESOURCES}  
     ${SOURCES} 
     ${HEADERS} 
     ${UI_HEADERS}
@@ -73,6 +76,8 @@ endif()
 
 include_directories(
     ${PROJECT_ROOT_DIR}/Graphics/sources/
+    ${PROJECT_ROOT_DIR}/Network/include/
+    ${PROJECT_ROOT_DIR}/Crypto/include/
 )
 
 target_link_libraries(${EXEC} PRIVATE 

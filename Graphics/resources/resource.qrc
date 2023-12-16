@@ -1,5 +1,5 @@
-<RCC>
-    <qresource prefix="/images">
-        <file>klimanov.ico</file>
-    </qresource>
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>klimanov.ico</file>
+</qresource>
 </RCC>

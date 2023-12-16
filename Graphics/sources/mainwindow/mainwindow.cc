@@ -18,6 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
 
   settings_layout = new Settings_layout();
   ui->horizontalLayout->addWidget(settings_layout);
+
+
+  // TODO: вынести в отдельную функию
+  all_interfaces = Network::WLAN::get_all_interfaces();
+  // connect(settings_layout->btn_int, &QPushButton::pressed, [=] () { settings_layout->get_all_interfaces(all_interfaces);});
+  settings_layout->get_all_interfaces(all_interfaces);
+  connect(settings_layout->menu_int, SIGNAL(triggered(QAction *)), network_layout,
+          SLOT(set_wlan(QAction *)));
 }
 
 MainWindow::~MainWindow() { 
@@ -31,8 +39,11 @@ void MainWindow::setup_MainWindow() {
   // set icon
   setWindowTitle(APP_NAME);
   setWindowFlags(Qt::Window);
-  QString path_icon{":images/klimanov.ico"};
-  setWindowIcon(QIcon{path_icon});
+  QString path_icon{":/klimanov.ico"};
+  if(!QFile(":/klimanov.ico").exists()) {
+    qWarning() << "Icon file not found";
+  }
+  setWindowIcon(QIcon{":/klimanov.ico"});
 
   // set size
   QSize screen_size = qApp->screens().at(0)->size();
@@ -54,13 +65,13 @@ void MainWindow::setup_ToolBar() {
   connect(ui->toolBar, SIGNAL(customContextMenuRequested(QPoint)), this,
           SLOT(void_slot()));
 
-  // Show Chats_layout widget by CTRL+SHIFT+C
-  connect(ui->actionChats, SIGNAL(triggered()), this, SLOT(run_chats()));
-  ui->toolBar->addAction(ui->actionChats);
-
   // Show Newtwork_layout widget by CTRL+SHIFT+N
   connect(ui->actionNetwork, SIGNAL(triggered()), this, SLOT(run_network()));
   ui->toolBar->addAction(ui->actionNetwork);
+
+  // Show Chats_layout widget by CTRL+SHIFT+C
+  connect(ui->actionChats, SIGNAL(triggered()), this, SLOT(run_chats()));
+  ui->toolBar->addAction(ui->actionChats);
 
   // Show Settings_layout widget by CTRL+SHIFT+S
   connect(ui->actionSettings, SIGNAL(triggered()), this, SLOT(run_settings()));
