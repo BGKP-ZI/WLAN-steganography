@@ -54,17 +54,7 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
             }
         }
 
-        Network::MACAddress my_addr; 
-        struct ifreq s;
-        int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
-        strcpy(s.ifr_name, interface.data());
-        if (!ioctl(fd, SIOCGIFHWADDR, &s)) {
-            for (std::size_t i = 0, end_i = Network::MACAddress::size(); i < end_i; ++i)
-                my_addr.addr[i] = (unsigned char)s.ifr_addr.sa_data[i];
-        } else {
-            throw std::runtime_error("Can\'t get recver MAC");
-        }
-        close(fd);
+        Network::MACAddress my_addr = ifconfig.MAC; 
 
         WLAN_header *wlan_hdr = (WLAN_header *)recv_msg;
         bool is_for_me = true;
@@ -72,8 +62,8 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
             is_for_me &= ((wlan_hdr->src.addr[i]  == addr.addr[i]) 
                       &&  (wlan_hdr->dest.addr[i] == my_addr.addr[i]));
         }
-        // std::cout << "Source | " << wlan_hdr-> src.to_string() << " | " << addr.to_string() << std::endl;
-        // std::cout << "Destin | " << wlan_hdr->dest.to_string() << " | " << my_addr.to_string() << std::endl;
+        std::cout << "Source | " << wlan_hdr-> src.to_string(true) << " | " <<    addr.to_string(true) << std::endl;
+        std::cout << "Destin | " << wlan_hdr->dest.to_string(true) << " | " << my_addr.to_string(true) << std::endl;
         
         if (is_for_me) {
             ++count;

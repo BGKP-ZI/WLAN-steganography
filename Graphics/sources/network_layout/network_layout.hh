@@ -11,7 +11,7 @@
 #include <QMessageBox>
 
 //include Network
-#include <WLAN.hh>
+#include <HICCUPS.hh>
 
 
 namespace Ui {
@@ -29,7 +29,7 @@ public:
   QListWidget* addres_listWidget;
 
 public slots:
-  void set_wlan(QAction *action);
+  void set_wlan(HICCUPS::HICCUPS *wlan_);
 
 private slots:
   void show_all_address();
@@ -37,7 +37,7 @@ private slots:
 
 private:
   Ui::Network_layout *ui;
-  Network::WLAN* wlan = nullptr;
+  HICCUPS::HICCUPS* wlan;
   QStringList address_list;
 };
 

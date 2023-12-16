@@ -7,6 +7,8 @@ Network_layout::Network_layout(QWidget *parent) : QWidget(parent), ui(new Ui::Ne
   ui->setupUi(this);
   hide();
 
+  wlan = nullptr;
+
   btn_connect = new QPushButton("Connect", this);
   btn_connect->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   ui->horizontalLayout->addWidget(btn_connect);
@@ -19,19 +21,12 @@ Network_layout::Network_layout(QWidget *parent) : QWidget(parent), ui(new Ui::Ne
 }
 
 Network_layout::~Network_layout() { 
-  delete wlan;
   delete btn_connect;
   delete ui; 
 }
 
-void Network_layout::set_wlan(QAction *action) {
-  wlan = new Network::WLAN((action->text()).toStdString());
-  QMessageBox msgBox;
-  msgBox.setIcon(QMessageBox::Information);
-  msgBox.setWindowTitle(tr("Interfaces is selected."));
-  msgBox.setText(tr("Interfaces ") + action->text() + tr(" is selected."));
-  // TODO: change layout to settings
-  msgBox.exec();
+void Network_layout::set_wlan(HICCUPS::HICCUPS *wlan_) {
+  wlan = wlan_;
 }
 
 void Network_layout::show_all_address() {

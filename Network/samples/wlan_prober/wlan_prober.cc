@@ -10,6 +10,7 @@ int main(void) {
   std::cout << "Choosen interface : " << interfaces[interfaces.size() - 1]
             << std::endl;
   Network::WLAN wlan(interfaces[interfaces.size() - 1]);
+  wlan.ifconfig_info(std::cout);
   wlan.scan_subnet();
   wlan.show_ARP_table(std::cout);
 
