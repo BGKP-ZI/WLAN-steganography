@@ -135,16 +135,6 @@ void WLAN::net_listen(void) const {
   delete[] recv_msg;
 }
 
-void WLAN::recieve(std::string &msg) const {
-  // char *recv_msg = new char[ifconfig.mtu];
-  // struct sockaddr_ll from;
-  // socklen_t fromlen = sizeof(from);
-  (void)msg;
-  // ;
-
-  // delete[] recv_msg;
-}
-
 void WLAN::send_ARP_request(const char *iface, const char *targetIP) {
   int sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
 

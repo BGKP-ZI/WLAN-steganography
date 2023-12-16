@@ -32,7 +32,7 @@
 
 namespace Network {
 
-class WLAN final {
+class WLAN {
 public:
   [[nodiscard]] WLAN(const std::string &interface);
 
@@ -43,7 +43,7 @@ public:
   void probe(const IPv4Address &addr);
   void send(const MACAddress &addr, const std::string &msg) const;
   void net_listen(void) const;
-  void recieve(std::string &msg) const;
+  
   void scan_subnet(void);
 
   void show_ARP_table(std::ostream &out);
@@ -51,9 +51,9 @@ public:
   WLAN(const WLAN &) = delete;
   WLAN &operator=(const WLAN &) = delete;
 
-  ~WLAN();
+  virtual ~WLAN();
 
-private:
+protected:
   void set_toaddr(const MACAddress &addr, struct sockaddr_ll &to) const noexcept;
 
   struct IfConfig final {
