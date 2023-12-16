@@ -5,6 +5,8 @@
 #include <QListWidget>
 #include <QWidget>
 #include <QPushButton>
+#include <QDebug>
+#include <QAction>
 
 //include Network
 #include <WLAN.hh>

@@ -62,5 +62,5 @@ void Network_layout::address_pressed(QListWidgetItem *item) {
 void Network_layout::test() {
   //TODO:
   // this->parentWidget()->parentWidget()->setEnabled(false);
-  qDebug() << "test";
+  // qDebug() << "test";
 }

@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QtGui>
 #include <QVBoxLayout>
+#include <QDebug>
+#include <QAction>
 
 #include <chats_layout/chats_layout.hh>
 #include <network_layout/network_layout.hh>

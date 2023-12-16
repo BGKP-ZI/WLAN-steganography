@@ -5,6 +5,8 @@
 #include <QPushButton>
 #include <QToolButton>
 #include <QMenu>
+#include <QDebug>
+#include <QAction>
 
 #include <WLAN.hh> 
 
@@ -24,7 +26,7 @@ public:
   QList<QAction*>  list_interfaces; 
 
   void get_all_interfaces(const std::vector<std::string> &interfaces);
-  
+
 private:
   Ui::Settings_layout *ui;
   QString all_interfaces;
