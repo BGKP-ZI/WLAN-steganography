@@ -36,12 +36,14 @@ void HICCUPS::HDC3_send(const Network::MACAddress &addr, Crypto::DataLoader &dlo
 
 void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dload, const std::string &path) {
     std::string result_msg = "";
+    std::vector<std::string> listen_msgs;
 
     char *recv_msg = new char[ifconfig.mtu];
     struct sockaddr_ll from;
     socklen_t fromlen = sizeof(from);
-    
+
     std::size_t count = 0;
+    bool exit = false;
 
     for (;;) {
         for (;;) {
@@ -60,18 +62,31 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
         bool is_for_me = true;
         for (std::size_t i = 0; i < 6; ++i) {
             is_for_me &= ((wlan_hdr->src.addr[i]  == addr.addr[i]) 
-                      &&  (wlan_hdr->dest.addr[i] == my_addr.addr[i]));
+                      &&  (wlan_hdr->dst.addr[i]  == my_addr.addr[i]));
         }
-        std::cout << "Source | " << wlan_hdr-> src.to_string(true) << " | " <<    addr.to_string(true) << std::endl;
-        std::cout << "Destin | " << wlan_hdr->dest.to_string(true) << " | " << my_addr.to_string(true) << std::endl;
         
         if (is_for_me) {
             ++count;
-            std::cout << "I hear something good. It happens " << count << " times" << std::endl;
-        }
+            std::string msg = std::string(recv_msg + wlan_hdr->size);
 
+            std::string new_buffer = dload.dechipper_text(msg);
+
+            std::size_t offset = new_buffer[6];
+            for (std::size_t i = 7 + offset, end_i = msg.size() - sizeof(std::uint32_t); i < end_i; ++i)
+                result_msg += msg[i];
+
+            std::cout << result_msg << std::endl;
+
+            if (new_buffer[5] == 1 || count == 187) {
+                exit = true;
+                break;
+            }
+        }
+        if (exit) break;
     }
     delete[] recv_msg;
+
+    Crypto::DataLoader::save(result_msg, path);
 }
 
 }

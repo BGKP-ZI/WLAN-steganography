@@ -68,8 +68,8 @@ protected:
 
   struct WLAN_header final {
   public:
-    MACAddress dest;
     MACAddress src;
+    MACAddress dst;
     uint16_t type = 0x0139;
 
     constexpr static inline std::size_t size = 14;
