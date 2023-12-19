@@ -272,7 +272,7 @@ void WLAN::scan_subnet(void) {
   int fd;
   struct ifreq ifr;
 
-  fd = socket(AF_INET, SOCK_DGRAM, 0);
+  fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
   ifr.ifr_addr.sa_family = AF_INET;
   strncpy(ifr.ifr_name, interface.data(), IFNAMSIZ - 1);
   if (ioctl(fd, SIOCGIFNETMASK, &ifr) == -1) {
@@ -280,14 +280,16 @@ void WLAN::scan_subnet(void) {
     throw std::runtime_error("Error getting subnet mask");
   }
   close(fd);
+
+  // std::cout <<  (inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr)) << std::endl;
+
   fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
   char subnet_mask[20];
   char sourceIP[20];
   for (std::size_t i = 0, end = sizeof(subnet_mask); i < end; ++i) {
     subnet_mask[i] = 0, sourceIP[i] = 0;
   }
-  strcpy(subnet_mask,
-         inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+  strcpy(subnet_mask, inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
 
   if (ioctl(fd, SIOCGIFADDR, &ifr) == -1) {
     close(fd);
