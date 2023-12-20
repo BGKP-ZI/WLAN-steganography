@@ -2,14 +2,9 @@ set(OUTFILE SimpleXOR)
 
 set(SOURCES 
 	SimpleXOR_test.cc
-	${PROJECT_ROOT_DIR}/Crypto/sources/Chippers.cc
-    ${PROJECT_ROOT_DIR}/Crypto/sources/KeyGenerator.cc
 )
 
-set(HEADERS 
-	${PROJECT_ROOT_DIR}/Crypto/include/Chippers.hh
-)
+add_executable(${OUTFILE} ${SOURCES})
 
-include_directories(${PROJECT_ROOT_DIR}/Crypto/include)
+target_link_libraries(${OUTFILE} crypto_slib)
 
-add_executable(${OUTFILE} ${SOURCES} ${HEADERS})

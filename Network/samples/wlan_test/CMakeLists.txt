@@ -2,35 +2,9 @@ set(OUTFILE wlan_test)
 
 set(SOURCES 
     wlan_test.cc
-    ${PROJECT_ROOT_DIR}/Network/sources/WLAN_header.cc
-    ${PROJECT_ROOT_DIR}/Network/sources/IfConfig.cc
 )
 
-#     ${PROJECT_ROOT_DIR}/Network/sources/WLAN.cc
+add_executable(${OUTFILE} ${SOURCES})
 
-if ("${OS_TYPE}" STREQUAL "UNKNOWN")
-  message(FATAL_ERROR "Unknown type of OS")
-else()
-#WIN_SYSTEM
-  if ("${OS_TYPE}" STREQUAL "WINDOWS")
-    set(SOURCES 
-      ${SOURCES}
-      ${PROJECT_ROOT_DIR}/Network/sources/win_WLAN.cc
-    )
-  endif("${OS_TYPE}" STREQUAL "WINDOWS")
-#NIX_SYSTEM
-  if ("${OS_TYPE}" STREQUAL "LINUX")
-    set(SOURCES 
-      ${SOURCES}
-      ${PROJECT_ROOT_DIR}/Network/sources/nix_WLAN.cc
-    )
-  endif("${OS_TYPE}" STREQUAL "LINUX")
-endif()
+target_link_libraries(${OUTFILE} network_slib)
 
-set(HEADERS 
-    ${PROJECT_ROOT_DIR}/Network/include/WLAN.hh
-)
-
-include_directories(${PROJECT_ROOT_DIR}/Network/include)
-
-add_executable(${OUTFILE} ${SOURCES} ${HEADERS})

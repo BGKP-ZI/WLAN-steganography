@@ -2,33 +2,8 @@ set(OUTFILE wlan_recver)
 
 set(SOURCES 
     wlan_recver.cc
-    ${PROJECT_ROOT_DIR}/Network/sources/WLAN_header.cc
-    ${PROJECT_ROOT_DIR}/Network/sources/IfConfig.cc
 )
 
-if ("${OS_TYPE}" STREQUAL "UNKNOWN")
-  message(FATAL_ERROR "Unknown type of OS")
-else()
-#WIN_SYSTEM
-  if ("${OS_TYPE}" STREQUAL "WINDOWS")
-    set(SOURCES 
-      ${SOURCES}
-      ${PROJECT_ROOT_DIR}/Network/sources/win_WLAN.cc
-    )
-  endif("${OS_TYPE}" STREQUAL "WINDOWS")
-#NIX_SYSTEM
-  if ("${OS_TYPE}" STREQUAL "LINUX")
-    set(SOURCES 
-      ${SOURCES}
-      ${PROJECT_ROOT_DIR}/Network/sources/nix_WLAN.cc
-    )
-  endif("${OS_TYPE}" STREQUAL "LINUX")
-endif()
+add_executable(${OUTFILE} ${SOURCES})
 
-set(HEADERS 
-    ${PROJECT_ROOT_DIR}/Network/include/WLAN.hh
-)
-
-include_directories(${PROJECT_ROOT_DIR}/Network/include)
-
-add_executable(${OUTFILE} ${SOURCES} ${HEADERS})
+target_link_libraries(${OUTFILE} network_slib)

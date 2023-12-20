@@ -11,10 +11,10 @@ class HICCUPS : public Network::WLAN {
 public:
     [[nodiscard]] HICCUPS(const std::string &interface);
 
-    void HDC2_send(const Network::MACAddress &, Crypto::DataLoader &, const std::string &) = delete;
+    void HDC2_send(const Network::MACAddress &, Crypto::DataLoader &, const std::string &);
     void HDC3_send(const Network::MACAddress &, Crypto::DataLoader &, const std::string &);
 
-    void HDC2_recv(const Network::MACAddress &, Crypto::DataLoader &, const std::string &) = delete;
+    void HDC2_recv(const Network::MACAddress &, Crypto::DataLoader &, const std::string &);
     void HDC3_recv(const Network::MACAddress &, Crypto::DataLoader &, const std::string &);
 };
 

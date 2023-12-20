@@ -14,28 +14,23 @@ void WLAN::setup_interface(void) {
 
     struct ifreq ifr;
 
-    if ((ifconfig.socket_id = socket(AF_PACKET, SOCK_RAW, 0)) ==
-        std::size_t(-1)) {
-      throw std::runtime_error("Can\'t open socket : " +
-                               std::string(std::strerror(errno)));
+    if ((ifconfig.socket_id = socket(AF_PACKET, SOCK_RAW, 0)) == std::size_t(-1)) {
+      throw std::runtime_error("Can\'t open socket : " + std::string(std::strerror(errno)));
     }
 
     strcpy(ifr.ifr_name, interface.data());
     if (ioctl(ifconfig.socket_id, SIOGIFINDEX, &ifr) < 0)
-      throw std::runtime_error("Failed to fetch ifindex: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to fetch ifindex: " + std::string(strerror(errno)));
     ifconfig.interface_index = ifr.ifr_ifindex;
 
     if (ioctl(ifconfig.socket_id, SIOCGIFHWADDR, &ifr) == -1)
-      throw std::runtime_error("Failed to fetch hardware address: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to fetch hardware address: " + std::string(strerror(errno)));
 
     for (std::size_t i = 0; i < ifconfig.MAC.size(); ++i)
       ifconfig.MAC.addr[i] = ifr.ifr_hwaddr.sa_data[i];
 
     if (ioctl(ifconfig.socket_id, SIOCGIFMTU, &ifr) == -1)
-      throw std::runtime_error("Failed to get the MTU: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to get the MTU: " + std::string(strerror(errno)));
 
     ifconfig.mtu = ifr.ifr_mtu;
 
@@ -45,8 +40,7 @@ void WLAN::setup_interface(void) {
     sll.sll_ifindex = ifconfig.interface_index;
     sll.sll_protocol = htons(ETH_P_ALL);
     if (bind(ifconfig.socket_id, (struct sockaddr *)&sll, sizeof(sll)) < 0)
-      throw std::runtime_error("Failed to bind the socket: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to bind the socket: " + std::string(strerror(errno)));
   } catch (const std::exception &exp) {
     std::cout << exp.what() << std::endl;
   }
@@ -67,11 +61,6 @@ void WLAN::set_toaddr(const MACAddress &addr, struct sockaddr_ll &to) const noex
   to.sll_ifindex = ifconfig.interface_index;
   std::memmove(&(to.sll_addr), addr.addr.data(), addr.size());
   to.sll_halen = addr.size();
-}
-
-void WLAN::probe(const IPv4Address &addr) {
-  std::string ip_addr = addr.to_string();
-  send_and_parse(interface.data(), ip_addr.data());
 }
 
 void WLAN::send(const MACAddress &addr, const std::string &msg) const {
@@ -134,7 +123,7 @@ void WLAN::net_listen(void) const {
 
     WLAN_header *wlan_hdr = (WLAN_header *)recv_msg;
     std::string msg = std::string(recv_msg + wlan_hdr->size);
-    std::cout << "| dst : " << wlan_hdr->dest.to_string(true) << 
+    std::cout << "| dst : " << wlan_hdr->dst.to_string(true) << 
                 " | src : " << wlan_hdr->src.to_string(true) << 
                 " | " <<  msg << 
                 " | data size : " << msg.size() << 
@@ -143,22 +132,10 @@ void WLAN::net_listen(void) const {
   delete[] recv_msg;
 }
 
-void WLAN::send_ARP_request(const char *iface, const char *targetIP) {
+void WLAN::send_ARP_request(const char *iface, const char *sourceIP, const char *targetIP) {
   int sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
 
   struct ifreq ifr {};
-  strcpy(ifr.ifr_name, iface);
-  if (ioctl(sockfd, SIOCGIFADDR, &ifr) == -1) {
-    close(sockfd);
-    throw std::runtime_error("Error getting IP address");
-  }
-
-  close(sockfd);
-
-  char sourceIP[20];
-  for (std::size_t i = 0, end = sizeof(sourceIP); i < end; ++i)
-    sourceIP[i] = 0;
-  strcpy(sourceIP, inet_ntoa(((sockaddr_in *)&ifr.ifr_addr)->sin_addr));
 
   sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
   if (sockfd == -1)
@@ -175,7 +152,7 @@ void WLAN::send_ARP_request(const char *iface, const char *targetIP) {
 
   memcpy(ethHeader.src.addr.data(), "\xff\xff\xff\xff\xff\xff",
          MACAddress::size());
-  memcpy(ethHeader.dest.addr.data(), ifr.ifr_hwaddr.sa_data,
+  memcpy(ethHeader.dst.addr.data(), ifr.ifr_hwaddr.sa_data,
          MACAddress::size());
   ethHeader.type = htons(ETHERTYPE_ARP);
 
@@ -216,11 +193,10 @@ void WLAN::send_ARP_request(const char *iface, const char *targetIP) {
 }
 
 bool WLAN::parse_ARP_response(const char *buffer) {
-  ARP_scanner::ARP_header *arpHeader =
-      (ARP_scanner::ARP_header *)(buffer + WLAN_header::size);
+  ARP_scanner::ARP_header *arpHeader = (ARP_scanner::ARP_header *)(buffer + WLAN_header::size);
 
-  if (ntohs(arpHeader->opCode) != ARP_scanner::ARP_REPLY)
-    return false;
+  // if (ntohs(arpHeader->opCode) != ARP_scanner::ARP_REPLY)
+  //   return false;
 
   std::stringstream t_ssf;
   for (std::size_t i = 0, end = MACAddress::size(); i < end; ++i) {
@@ -233,33 +209,15 @@ bool WLAN::parse_ARP_response(const char *buffer) {
 
   std::stringstream t_sss;
   for (std::size_t i = 0, end = IPv4Address::size(); i < end; ++i) {
-    t_sss << (int)arpHeader->senderIP[i];
+    t_sss << (int)arpHeader->targetIP[i];
     t_sss << ((i + 1 != end) ? "." : "");
   }
   std::string key = t_sss.str();
   ARP_table[key] = val_addr;
 
+  // std::cout << key << std::endl;
+
   return true;
-}
-
-void WLAN::send_and_parse(const char *iface, const char *targetIp) {
-  send_ARP_request(iface, targetIp);
-
-  char buffer[ETH_FRAME_LEN];
-  int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-  if (sockfd == -1)
-    throw std::runtime_error("Socket creation error");
-
-  sleep(1);
-  ssize_t bytesRead = recv(sockfd, buffer, sizeof(buffer), 0);
-  if (bytesRead == -1) {
-    close(sockfd);
-    throw std::runtime_error("Error receiving ARP response");
-  }
-
-  std::cout << "Is it ARP reply : " << parse_ARP_response(buffer) << std::endl;
-
-  close(sockfd);
 }
 
 void WLAN::show_ARP_table(std::ostream &out) {
@@ -268,6 +226,7 @@ void WLAN::show_ARP_table(std::ostream &out) {
   }
 }
 
+// refactor this method, please
 void WLAN::scan_subnet(void) {
   int fd;
   struct ifreq ifr;
@@ -281,8 +240,6 @@ void WLAN::scan_subnet(void) {
   }
   close(fd);
 
-  // std::cout <<  (inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr)) << std::endl;
-
   fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
   char subnet_mask[20];
   char sourceIP[20];
@@ -295,7 +252,6 @@ void WLAN::scan_subnet(void) {
     close(fd);
     throw std::runtime_error("Error getting IP address");
   }
-
   close(fd);
 
   for (std::size_t i = 0, end = sizeof(sourceIP); i < end; ++i)
@@ -303,6 +259,10 @@ void WLAN::scan_subnet(void) {
   strcpy(sourceIP, inet_ntoa(((sockaddr_in *)&ifr.ifr_addr)->sin_addr));
 
   IPv4Address subnet(subnet_mask), source(sourceIP);
+  #if 0
+    std::cout << source.to_string(true) << std::endl;
+  #endif
+
   for (std::size_t i = 0, end = IPv4Address::size(); i < end; ++i) {
     source.addr[i] &= subnet.addr[i];
   }
@@ -318,30 +278,26 @@ void WLAN::scan_subnet(void) {
     --numHosts;
 
   char buffer[ETH_FRAME_LEN];
-  int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+  int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
   if (sockfd == -1)
     throw std::runtime_error("Socket creation error");
 
-  for (std::size_t i = 1; i < numHosts; ++i) {
-    uint32_t addr_uint = 0;
-    IPv4Address targetIP;
-    for (std::size_t j = 0, end = IPv4Address::size(); j < end; ++j) {
-      addr_uint |= (source.addr[j] << (8 * j));
-    }
-    addr_uint |= i;
-    for (std::size_t j = 0, end = IPv4Address::size(); j < end; ++j)
-      targetIP.addr[j] = (addr_uint >> (j * 8)) & 255;
 
-    send_ARP_request(interface.data(), targetIP.to_string().data());
-    ssize_t bytesRead = recv(sockfd, buffer, sizeof(buffer), 0);
+  send_ARP_request(interface.data(), sourceIP, source.to_string().data());
+  close(sockfd);
 
+  sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+  // 4 -- max arp request count in network TODO: XENO FIX'i
+  for (int i = 0; i < 4; ++i) {
+    ssize_t bytesRead = recv(sockfd, buffer, sizeof(buffer), MSG_TRUNC);
     if (bytesRead == -1) {
       close(sockfd);
       throw std::runtime_error("Error receiving ARP response");
     }
-    parse_ARP_response(buffer);
-  }
 
+    parse_ARP_response(buffer);
+
+  }
   close(sockfd);
 }
 

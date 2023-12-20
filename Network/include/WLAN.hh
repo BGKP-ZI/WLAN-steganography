@@ -40,7 +40,6 @@ public:
   void ifconfig_info(std::ostream &out) const noexcept;
 
   [[nodiscard]] static std::vector<std::string> get_all_interfaces(void);
-  void probe(const IPv4Address &addr);
   void send(const MACAddress &addr, const std::string &msg) const;
   void net_listen(void) const;
   
@@ -68,6 +67,8 @@ protected:
 
   struct WLAN_header final {
   public:
+
+    MACAddress dst;
     MACAddress src;
     MACAddress dest;
     uint16_t type = 0x0139;
@@ -96,9 +97,8 @@ protected:
       uint8_t targetIP[IPv4Address::size()];
     };
   };
-  void send_ARP_request(const char *iface, const char *targetIp);
+  void send_ARP_request(const char *iface, const char *sourceIP, const char *targetIP);
   bool parse_ARP_response(const char *buffer);
-  void send_and_parse(const char *iface, const char *targetIp);
 
   std::string interface;
   IfConfig ifconfig;
