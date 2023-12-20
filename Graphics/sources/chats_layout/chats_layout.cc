@@ -63,7 +63,7 @@ void Chats_layout::load_file() {
     setCursor(Qt::WaitCursor);
 
     Crypto::DataLoader cdataloader(Crypto::ChipperT::SimpleXOR, Crypto::KeyGenerators::BBS_Keygen, {2, 997}); //TODO: seed ned get from settings
-    hiccups->HDC3_send(MAC, cdataloader, fileName.toStdString());
+    hiccups->HDC2_send(MAC, cdataloader, fileName.toStdString());
 
     setCursor(Qt::ArrowCursor);
   } 
@@ -73,11 +73,11 @@ void Chats_layout::get_file() {
   // QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Text Files (*.txt *.pdf);;Image Files (*.jpg *.png)"));
 
   // if (fileName != "") {
-  QString fileName = "file.png";
+  QString fileName = "file";
   setCursor(Qt::WaitCursor);
 
   Crypto::DataLoader cdataloader(Crypto::ChipperT::SimpleXOR, Crypto::KeyGenerators::BBS_Keygen, {2, 997}); //TODO: seed ned get from settings
-  hiccups->HDC3_recv(MAC, cdataloader, fileName.toStdString());
+  hiccups->HDC2_recv(MAC, cdataloader, fileName.toStdString());
 
   setCursor(Qt::ArrowCursor);
   // } 

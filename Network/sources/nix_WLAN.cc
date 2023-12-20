@@ -14,28 +14,23 @@ void WLAN::setup_interface(void) {
 
     struct ifreq ifr;
 
-    if ((ifconfig.socket_id = socket(AF_PACKET, SOCK_RAW, 0)) ==
-        std::size_t(-1)) {
-      throw std::runtime_error("Can\'t open socket : " +
-                               std::string(std::strerror(errno)));
+    if ((ifconfig.socket_id = socket(AF_PACKET, SOCK_RAW, 0)) == std::size_t(-1)) {
+      throw std::runtime_error("Can\'t open socket : " + std::string(std::strerror(errno)));
     }
 
     strcpy(ifr.ifr_name, interface.data());
     if (ioctl(ifconfig.socket_id, SIOGIFINDEX, &ifr) < 0)
-      throw std::runtime_error("Failed to fetch ifindex: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to fetch ifindex: " + std::string(strerror(errno)));
     ifconfig.interface_index = ifr.ifr_ifindex;
 
     if (ioctl(ifconfig.socket_id, SIOCGIFHWADDR, &ifr) == -1)
-      throw std::runtime_error("Failed to fetch hardware address: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to fetch hardware address: " + std::string(strerror(errno)));
 
     for (std::size_t i = 0; i < ifconfig.MAC.size(); ++i)
       ifconfig.MAC.addr[i] = ifr.ifr_hwaddr.sa_data[i];
 
     if (ioctl(ifconfig.socket_id, SIOCGIFMTU, &ifr) == -1)
-      throw std::runtime_error("Failed to get the MTU: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to get the MTU: " + std::string(strerror(errno)));
 
     ifconfig.mtu = ifr.ifr_mtu;
 
@@ -45,8 +40,7 @@ void WLAN::setup_interface(void) {
     sll.sll_ifindex = ifconfig.interface_index;
     sll.sll_protocol = htons(ETH_P_ALL);
     if (bind(ifconfig.socket_id, (struct sockaddr *)&sll, sizeof(sll)) < 0)
-      throw std::runtime_error("Failed to bind the socket: " +
-                               std::string(strerror(errno)));
+      throw std::runtime_error("Failed to bind the socket: " + std::string(strerror(errno)));
   } catch (const std::exception &exp) {
     std::cout << exp.what() << std::endl;
   }
@@ -288,28 +282,20 @@ void WLAN::scan_subnet(void) {
   if (sockfd == -1)
     throw std::runtime_error("Socket creation error");
 
+
   send_ARP_request(interface.data(), sourceIP, source.to_string().data());
   close(sockfd);
 
   sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+  // 4 -- max arp request count in network TODO: XENO FIX'i
   for (int i = 0; i < 4; ++i) {
-    // std::cout << i << std::endl;
     ssize_t bytesRead = recv(sockfd, buffer, sizeof(buffer), MSG_TRUNC);
     if (bytesRead == -1) {
       close(sockfd);
       throw std::runtime_error("Error receiving ARP response");
     }
 
-    // struct ARP_scanner::ARP_header*  arp_header = (ARP_scanner::ARP_header *)(buffer + WLAN_header::size);
-    // printf("%04x\n", arp_header->opCode);
-    // // if (arp_header->opCode == 0x0200) {
-    //   for (int j = 0; j < bytesRead; ++j) {
-    //     if (j % 14 == 0 && j != 0) printf("\n");
-    //     printf("%02x ", (unsigned char)buffer[j]);
-    //   }
-    //   printf("\n");
     parse_ARP_response(buffer);
-    // } else --i;
 
   }
   close(sockfd);
