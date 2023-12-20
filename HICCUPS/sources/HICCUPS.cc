@@ -63,6 +63,7 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
         WLAN_header *wlan_hdr = (WLAN_header *)recv_msg;
         bool is_for_me = true;
         for (std::size_t i = 0; i < 6; ++i) {
+
             is_for_me &= ((wlan_hdr->src.addr[i] == my_addr.addr[i]) 
                       &&  (wlan_hdr->dst.addr[i] == addr.addr[i]));
         }
@@ -78,6 +79,7 @@ void HICCUPS::HDC3_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
                 result_msg += msg[i];
 
             std::cout << result_msg << std::endl;
+
 
             if (new_buffer[5] == 1 || count == 187) {
                 exit = true;
@@ -154,6 +156,7 @@ void HICCUPS::HDC2_recv(const Network::MACAddress &addr, Crypto::DataLoader &dlo
 
             if (recv_msg[18] == 1) { 
                 std::cout << "THIS IS END" << std::endl;
+
                 exit = true;
                 break;
             }
