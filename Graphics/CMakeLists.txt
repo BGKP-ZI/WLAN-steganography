@@ -38,12 +38,6 @@ set(HEADERS
   ${PROJECT_ROOT_DIR}/Graphics/sources/chats_layout/chats_layout.hh
   ${PROJECT_ROOT_DIR}/Graphics/sources/network_layout/network_layout.hh
   ${PROJECT_ROOT_DIR}/Graphics/sources/settings_layout/settings_layout.hh
-
-  ${PROJECT_ROOT_DIR}/Crypto/include/DataLoader.hh
-  ${PROJECT_ROOT_DIR}/Network/include/WLAN.hh
-  ${PROJECT_ROOT_DIR}/Network/include/Address.hh
-  ${PROJECT_ROOT_DIR}/HICCUPS/include/HICCUPS.hh
-  ${PROJECT_ROOT_DIR}/HICCUPS/include/RawData.hh
 )
 
 set_property(SOURCE ${HEADERS} PROPERTY SKIP_AUTOGEN ON)
@@ -54,17 +48,6 @@ set (SOURCES
   ${PROJECT_ROOT_DIR}/Graphics/sources/chats_layout/chats_layout.cc
   ${PROJECT_ROOT_DIR}/Graphics/sources/network_layout/network_layout.cc
   ${PROJECT_ROOT_DIR}/Graphics/sources/settings_layout/settings_layout.cc
-
-  ${PROJECT_ROOT_DIR}/Network/sources/nix_WLAN.cc
-  ${PROJECT_ROOT_DIR}/Network/sources/IfConfig.cc
-  ${PROJECT_ROOT_DIR}/Network/sources/WLAN_header.cc
-
-  ${PROJECT_ROOT_DIR}/HICCUPS/sources/HICCUPS.cc
-  ${PROJECT_ROOT_DIR}/HICCUPS/sources/RawData.cc
-
-  ${PROJECT_ROOT_DIR}/Crypto/sources/Chippers.cc
-  ${PROJECT_ROOT_DIR}/Crypto/sources/KeyGenerator.cc
-  ${PROJECT_ROOT_DIR}/Crypto/sources/DataLoader.cc
 )
 
 set (RESOURCES
@@ -90,13 +73,11 @@ endif()
 
 include_directories(
     ${PROJECT_ROOT_DIR}/Graphics/sources/
-    ${PROJECT_ROOT_DIR}/Network/include/
-    ${PROJECT_ROOT_DIR}/Crypto/include/
-    ${PROJECT_ROOT_DIR}/HICCUPS/include/
 )
 
 target_link_libraries(${EXEC} PRIVATE 
   Qt${QT_VERSION_MAJOR}::Core 
   Qt${QT_VERSION_MAJOR}::Widgets 
   Qt${QT_VERSION_MAJOR}::Gui
+  HICCUPS_slib
 )
